@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lemuji.cloudshop.supplier.order.manager.dao.OrderDao">
+    
+	<sql id="orderColumns">
+		a.id AS "id",
+		a.create_time AS "createTime",
+		a.update_time AS "updateTime",
+		a.update_userid AS "updateUserid",
+		a.total_price AS "totalPrice",
+		a.status AS "status",
+		a.trans_type AS "transType",
+		a.bid AS "bid"
+	</sql>
+	
+	<sql id="orderJoins">
+	</sql>
+    
+	<select id="get" resultType="Order">
+		SELECT 
+			<include refid="orderColumns"/>
+		FROM order a
+		<include refid="orderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Order">
+		SELECT 
+			<include refid="orderColumns"/>
+		FROM order a
+		<include refid="orderJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Order">
+		SELECT 
+			<include refid="orderColumns"/>
+		FROM order a
+		<include refid="orderJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO order(
+			id,
+			create_time,
+			update_time,
+			update_userid,
+			total_price,
+			status,
+			trans_type,
+			bid
+		) VALUES (
+			#{id},
+			#{createTime},
+			#{updateTime},
+			#{updateUserid},
+			#{totalPrice},
+			#{status},
+			#{transType},
+			#{bid}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE order SET 	
+			create_time = #{createTime},
+			update_time = #{updateTime},
+			update_userid = #{updateUserid},
+			total_price = #{totalPrice},
+			status = #{status},
+			trans_type = #{transType},
+			bid = #{bid}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM order
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

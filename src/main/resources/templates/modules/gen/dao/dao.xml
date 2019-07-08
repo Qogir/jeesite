@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+	<name>dao</name>
+	<filePath>src/main/java/${packageName}/${moduleName}/${subModuleName}</filePath>
+	<fileName>${ClassName}Mapper.java</fileName>
+	<content><![CDATA[
+
+package ${packageName}.${moduleName}<#if subModuleName != "">.${subModuleName}</#if>;
+
+
+import ${packageName}.entity<#if subModuleName != "">.${subModuleName}</#if>.${ClassName};
+
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
+/**
+ * @author ${functionAuthor}
+ * @date ${functionVersion}
+ * @remark ${functionName}Mapper
+ */
+@Mapper
+public interface ${ClassName}Mapper extends Mapper {
+
+	/**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}根据id查询
+	 */
+	@Select("select<#assign columnField><#list table.columnList as c>${c.name},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))} from ${table.name} where id= ${"#"}{id} and bid= ${"#"}{bid}")
+	${ClassName} read(@Param("bid")String bid,@Param("id")String id);
+
+	/**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}分页查询
+	 */
+	@Select("select<#assign columnField><#list table.columnList as c>${c.name},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))} from ${table.name}  where bid= ${"#"}{bid}")
+	List<${ClassName}> list(${ClassName} ${className});
+
+	/**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}新增
+	 */
+	@Insert("insert into ${table.name}(<#assign columnField><#list table.columnList as c>${c.name},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))})"
+		   +" values(<#assign columnField><#list table.columnList as c>${"#"}{${c.javaFieldId}},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))})")
+	Integer create(${ClassName} ${className});
+
+	/**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}修改
+	 */
+	@Update("update ${table.name} set<#assign columnField><#list table.columnList as c>${c.name}=${"#"}{${c.javaFieldId}},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))} where id= ${"#"}{id}")
+    Integer update(${ClassName} ${className});
+
+	/**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}删除
+	 */
+    @Delete("delete from ${table.name} where id= ${"#"}{id}")
+    Integer delete(@Param(value = "id")String id);
+
+    /**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}批量新增
+	 */
+    @Insert("<script>"
+            + "insert into ${table.name}(<#assign columnField><#list table.columnList as c>${c.name},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))}) values"
+            + "<foreach item='obj' collection='${className}s' separator=','>"
+            + "(<#assign columnField><#list table.columnList as c>${"#"}{obj.${c.javaFieldId}},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))})"
+            + "</foreach>"
+            + "</script>")
+    int batchCreate(@Param(value = "${className}s") List<${ClassName}> ${className}s);
+
+    /**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}批量修改
+	 */
+    @Update("<script><foreach item='obj' index='index' collection='{className}s' separator=','>"
+            + "update ${table.name} set <#assign columnField><#list table.columnList as c>${c.name}=${"#"}{obj.${c.javaFieldId}},</#list> </#assign> ${columnField?substring(0, columnField?last_index_of(","))} where id=${"#"}{obj.id}"
+            + "</foreach></script>")
+    Integer batchUpdate(@Param(value = "{className}s") List<${ClassName}> ${className}s);
+
+    /**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}批量删除
+	 */
+    @Delete("<script>"
+            + "delete from ${table.name} where id in"
+            + "<foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>"
+            + "${"#"}{id} "
+            + "</foreach>"
+            + "</script>")
+    Integer batchDelete(@Param(value = "ids") String[] ids);
+
+    /**
+	 * @author ${functionAuthor}
+	 * @date ${functionVersion}
+	 * @remark ${functionName}批量查询
+	 */
+    @Select("<script>"
+            + "select count(0) from ${table.name} where id in"
+            + "<foreach item='id' index='index' collection='ids' open='(' separator=',' close=')'>"
+            + "${"#"}{id} "
+            + "</foreach>"
+            + "</script>")
+    Integer countById(@Param(value = "ids") String[] ids, @Param("bid") String bid);
+}]]>
+	</content>
+</template>
